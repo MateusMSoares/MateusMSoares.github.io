@@ -49,6 +49,7 @@
       .then(response => {
         if (response.ok) {
           // Atualizar a lista de campos após a exclusão bem-sucedida
+          li.remove();
           atualizarCampos();
         } else {
           console.error('Erro ao excluir campo');
