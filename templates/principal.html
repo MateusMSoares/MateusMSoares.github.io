@@ -12,51 +12,57 @@
 </form>
 
 <script>
-  document.getElementById("campoForm").addEventListener("submit", function(event){
-    event.preventDefault()
-  
-    var nome = document.getElementById("nome").value;
-  
-    fetch('/campos', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({nome: nome}),
-    })
-    .then(response => response.json())
-    .then(data => {
-      console.log('Sucesso:', data);
-      atualizarCampos();  // Atualiza a lista de campos
-    })
-    .catch((error) => {
-      console.log("retorno: ", JSON.stringify({nome: nome}));
-      console.log("data: ", data);
-      console.error('Erro:', error);
-    });
-  });
-  
+  // Função para criar os elementos HTML para cada campo na lista
+  function criarElementoCampo(campo) {
+    var li = document.createElement('li');
+    li.textContent = campo.nome;
+    
+    // Botão de exclusão
+    var btnExcluir = document.createElement('button');
+    btnExcluir.textContent = 'Excluir';
+    btnExcluir.onclick = function() {
+      // Enviar solicitação para deletar o campo correspondente
+      fetch('/campos/' + campo.id, {
+        method: 'DELETE',
+      })
+      .then(response => {
+        if (response.ok) {
+          // Atualizar a lista de campos após a exclusão bem-sucedida
+          atualizarCampos();
+        } else {
+          console.error('Erro ao excluir campo');
+        }
+      })
+      .catch(error => {
+        console.error('Erro:', error);
+      });
+    };
+    
+    li.appendChild(btnExcluir);
+    return li;
+  }
+
+  // Função para atualizar a lista de campos
   function atualizarCampos() {
-    // Busca os campos do servidor
     fetch('/campos')
       .then(response => response.json())
       .then(campos => {
-        // Limpa a lista de campos
         var listaCampos = document.getElementById('listaCampos');
         listaCampos.innerHTML = '';
-  
-        // Adiciona cada campo à lista
-        for (var i = 0; i < campos.campo.length; i++) {
-          var li = document.createElement('li');
-          li.textContent = campos.campo[i].nome;
-          listaCampos.appendChild(li);
-        }
+
+        campos.campo.forEach(function(campo) {
+          var elementoCampo = criarElementoCampo(campo);
+          listaCampos.appendChild(elementoCampo);
+        });
+      })
+      .catch(error => {
+        console.error('Erro:', error);
       });
   }
-  
-  // Chama a função atualizarCampos quando a página é carregada
+
+  // Chamar a função para atualizar a lista de campos quando a página é carregada
   window.onload = atualizarCampos;
-  </script>
+</script>
 
 </body>
 </html>

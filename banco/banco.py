@@ -26,6 +26,16 @@ def reescreverListaCampos(lista):
     with open('banco\campos.json', 'w') as f:
         json.dump(lista, f)
 
+def deletarCampo(id):
+    # Lê os campos existentes
+    with open('banco/campos.json', 'r') as f:
+        campos = json.load(f)
+    # Remove o campo com o ID especificado
+    campos['campo'] = [campo for campo in campos['campo'] if campo['id'] != id]
+    # Escreve a lista atualizada de campos de volta ao arquivo
+    with open('banco/campos.json', 'w') as f:
+        json.dump(campos, f)
+
 def gerarid():
     # Lê a lista de campos
     with open('banco/campos.json', 'r') as f:

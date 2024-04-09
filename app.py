@@ -18,5 +18,10 @@ def add_campo():
 def get_campos():
     return jsonify(banco.retornarListaCampos()), 200
 
+@app.route('/campos/<int:id>', methods=['DELETE']):
+def delete_campo(id):
+    banco.deletarCampo(id)
+    return jsonify({'id': id}), 200
+
 if __name__ == '__main__':
     app.run(debug=True)
