@@ -12,7 +12,28 @@
 </form>
 
 <script>
-  // Função para criar os elementos HTML para cada campo na lista
+  document.getElementById("campoForm").addEventListener("submit", function(event){
+    event.preventDefault();
+
+    var nome = document.getElementById("nome").value;
+
+    fetch('/campos', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({nome: nome}),
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log('Sucesso:', data);
+      atualizarCampos();  // Atualiza a lista de campos
+    })
+    .catch((error) => {
+      console.error('Erro ao enviar dados:', error);
+    });
+  });
+
   function criarElementoCampo(campo) {
     var li = document.createElement('li');
     li.textContent = campo.nome;
@@ -41,26 +62,28 @@
     li.appendChild(btnExcluir);
     return li;
   }
-
-  // Função para atualizar a lista de campos
+  
   function atualizarCampos() {
+    // Busca os campos do servidor
     fetch('/campos')
       .then(response => response.json())
       .then(campos => {
+        // Limpa a lista de campos
         var listaCampos = document.getElementById('listaCampos');
         listaCampos.innerHTML = '';
 
+        // Adiciona cada campo à lista
         campos.campo.forEach(function(campo) {
           var elementoCampo = criarElementoCampo(campo);
           listaCampos.appendChild(elementoCampo);
         });
       })
       .catch(error => {
-        console.error('Erro:', error);
+        console.error('Erro ao obter campos:', error);
       });
   }
-
-  // Chamar a função para atualizar a lista de campos quando a página é carregada
+  
+  // Chama a função atualizarCampos quando a página é carregada
   window.onload = atualizarCampos;
 </script>
 
