@@ -30,6 +30,8 @@
       atualizarCampos();  // Atualiza a lista de campos
     })
     .catch((error) => {
+      console.log("retorno: ", JSON.stringify({nome: nome}));
+      console.log("data: ", data);
       console.error('Erro:', error);
     });
   });
@@ -53,7 +55,7 @@
   }
   
   // Chama a função atualizarCampos quando a página é carregada
-  window.onload = atualizarCampos();
+  window.onload = atualizarCampos;
   </script>
 
 </body>

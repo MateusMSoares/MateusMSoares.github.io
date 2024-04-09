@@ -12,9 +12,12 @@ def adicionarListaCampos(campo):
     # Gera o próximo ID disponível
     novo_id = gerarid()
     # Adiciona o ID ao campo
-    campo['id'] = novo_id
+    novoRegistro = {
+        'id': novo_id,
+        'nome': campo["nome"],
+    }
     # Adiciona o novo campo
-    campos['campo'].append(campo)
+    campos['campo'].append(novoRegistro)
     # Escreve a lista atualizada de campos de volta ao arquivo
     with open('banco/campos.json', 'w') as f:
         json.dump(campos, f)
