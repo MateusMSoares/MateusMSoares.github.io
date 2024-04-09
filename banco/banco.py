@@ -1,7 +1,7 @@
 import json
 
 def retornarListaCampos():
-    with open('banco\campos.json', 'r') as f:
+    with open('banco/campos.json', 'r') as f:
         ListaCampos = json.load(f)
     return ListaCampos
 
