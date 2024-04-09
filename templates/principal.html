@@ -20,6 +20,8 @@
     var btnExcluir = document.createElement('button');
     btnExcluir.textContent = 'Excluir';
     btnExcluir.addEventListener('click', function() {
+      event.stopPropagation();
+      event.preventDefault();
       excluirCampo(campo.id, li);
     });
     
