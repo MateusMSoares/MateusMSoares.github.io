@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<h2>Adicionar campo</h2>
+
+<form id="campoForm">
+  <label for="nome">Nome:</label><br>
+  <input type="text" id="nome" name="nome"><br>
+  <input type="submit" value="Submit">
+  <ul id="listaCampos"></ul>
+</form>
+
+<script>
+  document.getElementById("campoForm").addEventListener("submit", function(event){
+    event.preventDefault()
+  
+    var nome = document.getElementById("nome").value;
+  
+    fetch('/campos', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({nome: nome}),
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log('Sucesso:', data);
+      atualizarCampos();  // Atualiza a lista de campos
+    })
+    .catch((error) => {
+      console.error('Erro:', error);
+    });
+  });
+  
+  function atualizarCampos() {
+    // Busca os campos do servidor
+    fetch('/campos')
+      .then(response => response.json())
+      .then(campos => {
+        // Limpa a lista de campos
+        var listaCampos = document.getElementById('listaCampos');
+        listaCampos.innerHTML = '';
+  
+        // Adiciona cada campo à lista
+        for (var i = 0; i < campos.campo.length; i++) {
+          var li = document.createElement('li');
+          li.textContent = campos.campo[i].nome;
+          listaCampos.appendChild(li);
+        }
+      });
+  }
+  
+  // Chama a função atualizarCampos quando a página é carregada
+  window.onload = atualizarCampos;
+  </script>
+
+</body>
+</html>
