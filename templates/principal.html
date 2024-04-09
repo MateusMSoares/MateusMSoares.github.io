@@ -12,7 +12,56 @@
 </form>
 
 <script>
-  document.getElementById("campoForm").addEventListener("submit", function(event){
+  // Funções
+  function criarElementoCampo(campo) {
+    var li = document.createElement('li');
+    li.textContent = campo.nome;
+    
+    var btnExcluir = document.createElement('button');
+    btnExcluir.textContent = 'Excluir';
+    btnExcluir.addEventListener('click', function() {
+      excluirCampo(campo.id, li);
+    });
+    
+    li.appendChild(btnExcluir);
+    return li;
+  }
+
+  function atualizarCampos() {
+    fetch('/campos')
+      .then(response => response.json())
+      .then(campos => {
+        var listaCampos = document.getElementById('listaCampos');
+        listaCampos.innerHTML = '';
+
+        campos.campo.forEach(function(campo) {
+          var elementoCampo = criarElementoCampo(campo);
+          listaCampos.appendChild(elementoCampo);
+        });
+      })
+      .catch(error => {
+        console.error('Erro ao obter campos:', error);
+      });
+  }
+
+  function excluirCampo(id, li) {
+    fetch('/campos/' + id, {
+      method: 'DELETE',
+    })
+    .then(response => {
+      if (response.ok) {
+        li.remove();
+        atualizarCampos();
+      } else {
+        console.error('Erro ao excluir campo');
+      }
+    })
+    .catch(error => {
+      console.error('Erro:', error);
+    });
+  }
+
+  function adicionarCampo(event) {
     event.preventDefault();
 
     var nome = document.getElementById("nome").value;
@@ -27,64 +76,15 @@
     .then(response => response.json())
     .then(data => {
       console.log('Sucesso:', data);
-      atualizarCampos();  // Atualiza a lista de campos
+      atualizarCampos();
     })
     .catch((error) => {
       console.error('Erro ao enviar dados:', error);
     });
-  });
-
-  function criarElementoCampo(campo) {
-    var li = document.createElement('li');
-    li.textContent = campo.nome;
-    
-    // Botão de exclusão
-    var btnExcluir = document.createElement('button');
-    btnExcluir.textContent = 'Excluir';
-    btnExcluir.onclick = function() {
-      // Enviar solicitação para deletar o campo correspondente
-      fetch('/campos/' + campo.id, {
-        method: 'DELETE',
-      })
-      .then(response => {
-        if (response.ok) {
-          // Atualizar a lista de campos após a exclusão bem-sucedida
-          li.remove();
-          atualizarCampos();
-        } else {
-          console.error('Erro ao excluir campo');
-        }
-      })
-      .catch(error => {
-        console.error('Erro:', error);
-      });
-    };
-    
-    li.appendChild(btnExcluir);
-    return li;
   }
-  
-  function atualizarCampos() {
-    // Busca os campos do servidor
-    fetch('/campos')
-      .then(response => response.json())
-      .then(campos => {
-        // Limpa a lista de campos
-        var listaCampos = document.getElementById('listaCampos');
-        listaCampos.innerHTML = '';
 
-        // Adiciona cada campo à lista
-        campos.campo.forEach(function(campo) {
-          var elementoCampo = criarElementoCampo(campo);
-          listaCampos.appendChild(elementoCampo);
-        });
-      })
-      .catch(error => {
-        console.error('Erro ao obter campos:', error);
-      });
-  }
-  
-  // Chama a função atualizarCampos quando a página é carregada
+  // Eventos
+  document.getElementById("campoForm").addEventListener("submit", adicionarCampo);
   window.onload = atualizarCampos;
 </script>
 
